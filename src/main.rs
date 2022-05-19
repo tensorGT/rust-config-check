@@ -44,3 +44,19 @@ fn validate_config(content: &str) -> Result<(), Vec<String>> {
             Ok(w) if w >= 1 && w <= 64 => {}
             _ => errors.push(format!("invalid max_workers '{}': must be 1..64", w_str)),
         }
+    }
+
+    if errors.is_empty() {
+        Ok(())
+    } else {
+        Err(errors)
+    }
+}
+
+fn main() {
+    let args: Vec<String> = env::args().collect();
+    let path = args.get(1).map(|s| s.as_str()).unwrap_or("sample.conf");
+
+    let content = match fs::read_to_string(path) {
+        Ok(c) => c,
+        Err(e) => {
