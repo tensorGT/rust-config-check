@@ -60,3 +60,19 @@ fn main() {
     let content = match fs::read_to_string(path) {
         Ok(c) => c,
         Err(e) => {
+            eprintln!("FAIL: cannot open '{}': {}", path, e);
+            process::exit(1);
+        }
+    };
+
+    match validate_config(&content) {
+        Ok(()) => println!("PASS: '{}' config looks valid!", path),
+        Err(errs) => {
+            println!("FAIL: found {} error(s) in '{}':", errs.len(), path);
+            for e in errs {
+                println!("  - {}", e);
+            }
+            process::exit(1);
+        }
+    }
+}
